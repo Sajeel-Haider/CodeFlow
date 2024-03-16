@@ -1,0 +1,22 @@
+{
+  "name": "codeflow-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sajeel-Haider/CodeFlow.git"
+  },
+  "author": "Rijja and Sajeel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sajeel-Haider/CodeFlow/issues"
+  },
+  "homepage": "https://github.com/Sajeel-Haider/CodeFlow#readme",
+  "dependencies": {
+    "express": "^4.18.3"
+  }
+}
