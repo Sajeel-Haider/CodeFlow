@@ -6,6 +6,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { setAuthUser } from "../../store/slices/authUser-slice";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,6 +16,7 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
+    e.preventDefault();
     axios
       .post(`${process.env.REACT_APP_API_URL}/login`, {
         email: email,
@@ -22,7 +25,15 @@ const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           toast.success(res.data.message);
-          dispatch(res.data.user);
+          dispatch(setAuthUser(res.data.user));
+          setTimeout(() => {
+            console.log(res.data.user.is_admin);
+            if (res.data.user.is_admin) {
+              navigate("/adminDashboard");
+            } else {
+              navigate("/userDashboard");
+            }
+          }, 5000);
         }
         if (res.status === 400) {
           toast.warn(res.data.message);
@@ -33,19 +44,15 @@ const Login = () => {
         if (res.status === 401) {
           toast.warn(res.data.message);
         }
-        if (res.status === 404) {
-          toast.warn(res.data.message);
-        }
       })
       .catch((err) => {
+        console.log(err);
         toast.error("Server not responding");
       });
-    e.preventDefault();
   };
 
   return (
     <>
-      {" "}
       <div className="flex justify-center items-center bg-gray-100 h-screen">
         <div className="w-11/12 sm:w-96  bg-white px-12 py-12 rounded-2xl">
           <form onSubmit={handleSubmit}>

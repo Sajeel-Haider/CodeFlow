@@ -6,6 +6,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { setAuthUser } from "../../store/slices/authUser-slice";
+
 import signup_back from "../../assets/SignUp/signup-back.jpg";
 
 const SignUp = () => {
@@ -29,7 +31,7 @@ const SignUp = () => {
         }
         if (res.status === 200) {
           toast.success(res.data.message);
-          dispatch(res.data.user);
+          dispatch(setAuthUser(res.data.user));
           setTimeout(() => {
             navigate("/login");
           }, 5000);

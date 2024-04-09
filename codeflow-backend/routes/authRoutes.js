@@ -39,12 +39,10 @@ router.post("/signup", async (req, res) => {
         "INSERT INTO users (username, email, password_hash, join_date) VALUES ($1, $2, $3, $4) RETURNING * ",
         [name, email, hashedPassword, formattedDate]
       );
-      res
-        .status(200)
-        .send({
-          message: "Credentials added successfully",
-          user: user.rows[0],
-        });
+      res.status(200).send({
+        message: "Credentials added successfully",
+        user: user.rows[0],
+      });
 
       console.log("User saved successfully!");
     } catch (error) {
@@ -68,23 +66,35 @@ router.post("/login", async (req, res) => {
       email,
     ]);
 
-    if (!user) {
+    if (user.rows.length === 0) {
       return res.status(404).send({ error: "Invalid Credentials" });
     }
+
     const passwordMatch = await bcrypt.compare(
       password,
       user.rows[0].password_hash
     );
 
     if (passwordMatch) {
-      console.log(user.rows[0]);
-      res.status(200).send({ message: "Login successful", user: user.rows[0] });
+      console.log(user.rows.length);
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
+      const checkUpdateReq = await db.query(
+        "UPDATE users SET last_login = $1 WHERE email = $2",
+        [formattedDate, email]
+      );
+      if (checkUpdateReq) {
+        return res
+          .status(200)
+          .send({ message: "Login successful", user: user.rows[0] });
+      }
     } else {
       return res.status(401).send({ error: "Invalid password" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    return res.status(500).send({ error: "Internal Server Error" });
   }
 });
 
