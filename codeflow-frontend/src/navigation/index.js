@@ -7,6 +7,7 @@ import UserDashboard from "../pages/Dashboard/UserDashboard/UserDashboard";
 import SignUp from "../../src/pages/SignUp/SignUp";
 import Login from "../../src/pages/Login/Login";
 import PrivateRoute from "./PrivateRoute";
+import Users from "../pages/Dashboard/AdminDashboard/Users";
 
 const index = () => {
   const isAdmin = true; // Determine if user is admin
@@ -23,6 +24,17 @@ const index = () => {
       <Route
         path="/userDashboard"
         element={<PrivateRoute component={<UserDashboard />} />}
+      />
+      <Route
+        path="/adminDashboard/*"
+        element={
+          <AdminDashboard>
+            <Routes>
+              <Route index element={<AdminDashboard />} />
+              <Route path="users" element={<Users />} />
+            </Routes>
+          </AdminDashboard>
+        }
       />
     </Routes>
   );
