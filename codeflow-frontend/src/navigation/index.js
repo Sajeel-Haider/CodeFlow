@@ -8,6 +8,7 @@ import SignUp from "../../src/pages/SignUp/SignUp";
 import Login from "../../src/pages/Login/Login";
 import PrivateRoute from "./PrivateRoute";
 import Users from "../pages/Dashboard/AdminDashboard/Users";
+import AddProblem from "../pages/Dashboard/AdminDashboard/AddProblem";
 
 const index = () => {
   const isAdmin = true; // Determine if user is admin
@@ -32,6 +33,7 @@ const index = () => {
             <Routes>
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<Users />} />
+              <Route path="addProblem" element={<AddProblem />} />
             </Routes>
           </AdminDashboard>
         }

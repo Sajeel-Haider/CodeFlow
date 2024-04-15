@@ -32,6 +32,16 @@ const AdminDashboard = ({ children }) => {
           text="Users"
           onClick={() => updateNavigateUrl("users")}
         />
+        <SidebarItem
+          icon={<FaUsers />}
+          text="Add Problem"
+          onClick={() => updateNavigateUrl("addProblem")}
+        />
+        <SidebarItem
+          icon={<FaUsers />}
+          text="Remove Problem"
+          onClick={() => updateNavigateUrl("removeProblem")}
+        />
         <hr className="my-3" />
         <SidebarItem
           icon={<IoMdSettings />}

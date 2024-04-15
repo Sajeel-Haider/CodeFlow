@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+
 import { MdDelete } from "react-icons/md";
-import DeleteConfirmationModal from "../../../utils/Modals/DeleteComfirmationModel";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import DeleteConfirmationModal from "../../../utils/Modals/DeleteComfirmationModel";
+
 const UserTable = ({ userData }) => {
   const [showModal, setShowModal] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
@@ -14,15 +19,18 @@ const UserTable = ({ userData }) => {
   const handleConfirmDelete = async () => {
     console.log("Deleting user with ID:", deleteUserId);
     try {
-      // Send a DELETE request to the backend API
       const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/deleteUser?id=${deleteUserId}`
+        `${process.env.REACT_APP_API_URL}/api/deleteUser/${deleteUserId}`
       );
-      console.log(response.data); // Log success message from the server
-      // Handle success, e.g., update UI or show a notification
+      if (response.status === 200) {
+        toast.success("User deleted successfully");
+        window.location.reload();
+        console.log(response.data);
+      } else if (response.status === 204) {
+        toast.warn("User not found");
+      }
     } catch (error) {
       console.error("Error deleting user:", error);
-      // Handle error, e.g., show an error message to the user
     }
     setShowModal(false);
   };
@@ -94,6 +102,7 @@ const UserTable = ({ userData }) => {
         onCancel={handleCancelDelete}
         onConfirm={handleConfirmDelete}
       />
+      <ToastContainer />
     </div>
   );
 };
