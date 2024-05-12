@@ -4,6 +4,8 @@ import { IoIosArrowForward } from "react-icons/io";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 
+import logo from "../../../assets/logo.webp";
+
 const SidebarContext = createContext();
 
 const Sidebar = ({ children }) => {
@@ -14,12 +16,13 @@ const Sidebar = ({ children }) => {
       <nav className="h-full flex flex-col bg-white border-r shadow-sm">
         <div className="p-4 pb-2 flex justify-between items-center">
           <img
-            src=""
+            src={logo}
             alt="logo"
             className={`overflow-hidden transition-all ${
-              expanded ? "w-32" : "w-0"
+              expanded ? "w-20" : "w-0"
             }`}
           />
+
           <button
             onClick={() => setExpanded((curr) => !curr)}
             className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"

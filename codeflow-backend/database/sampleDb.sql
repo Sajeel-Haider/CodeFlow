@@ -94,7 +94,7 @@ CREATE TABLE subscriptions (
 {
   "_id": ObjectId(),
   "repository_id": "UUID",
-  "user_id": "user_id",
+  "user_id": "user_id", --the one in the postgres
   "projects": ["project_id"],
   "creation_date": ISODate(),
   "repository_name": String

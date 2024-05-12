@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const db = require("../database/db");
+const db = require("../database/connectPostgresDb");
 const { format } = require("date-fns");
 
 router.post("/signup", async (req, res) => {
