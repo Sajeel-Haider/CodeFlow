@@ -4,17 +4,19 @@ import { useNavigate } from "react-router";
 import SearchBar from "../../../utils/Tools/SearchBar";
 import Button from "../../../utils/Buttons/Button";
 import RepositoryCard from "../../../utils/Cards/RespositoryCard";
-
+import { useSelector } from "react-redux";
 const Repositories = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const navigate = useNavigate();
+  const authUser = useSelector((state) => state.user);
 
   const fetchProjects = async () => {
+    console.log(authUser);
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/projects`
+        `${process.env.REACT_APP_API_URL}/api/projects/${authUser.user_id}`
       );
       setProjects(response.data);
       setFilteredProjects(response.data); // Initially, all projects are shown

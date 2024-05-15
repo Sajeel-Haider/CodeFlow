@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
 
+const db = require("../database/connectPostgresDb");
 const Project = mongoose.model("Project");
 
 const storage = multer.memoryStorage();
@@ -55,6 +56,38 @@ router.get("/projects", async (req, res) => {
   }
 });
 
+router.get("/projects/:user_id", async (req, res) => {
+  const { user_id } = req.params; // Retrieve the user_id from the path parameter
+
+  console.log("User ID:", user_id); // Debug: Log the user_id to check its format and value
+
+  try {
+    const query = {
+      $or: [
+        { created_by: user_id }, // Matches projects created by the user
+        { "collaborators.user_id": user_id }, // Matches projects where the user is a collaborator
+      ],
+    };
+
+    console.log("Query:", JSON.stringify(query)); // Debug: Log the constructed query
+
+    const projects = await Project.find(query);
+
+    console.log("Found projects:", projects.length); // Debug: Log number of projects found
+
+    if (projects.length > 0) {
+      res.status(200).json(projects);
+    } else {
+      res.status(404).json({ message: "No projects found for this user" });
+    }
+  } catch (error) {
+    console.error("Error retrieving projects:", error);
+    res
+      .status(500)
+      .json({ message: "Error retrieving projects", error: error });
+  }
+});
+
 router.get("/projects/:projectId", async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
@@ -83,10 +116,46 @@ router.patch(
         { new: true }
       );
       res.status(200).json(project);
+      io.emit("fileUpdated", { projectId, fileName, code_content }); // Notify all clients of the update
     } catch (error) {
       res.status(400).json({ message: "Failed to update file", error: error });
     }
   }
 );
+
+router.patch("/projects/:projectId/add-collaborator", async (req, res) => {
+  const { projectId } = req.params;
+  const { email, permission } = req.body;
+
+  try {
+    // Fetch user_id from PostgreSQL using the email
+    const pgRes = await db.query("SELECT user_id FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (pgRes.rows.length === 0) {
+      return res.status(404).send({ message: "User not found" });
+    }
+    const user_id = pgRes.rows[0].user_id;
+    console.log(user_id, projectId, permission);
+
+    // Update MongoDB with the new collaborator
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $push: {
+          collaborators: { user_id: user_id, permissions: permission },
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(updatedProject);
+  } catch (error) {
+    console.error("Error adding collaborator:", error);
+    res
+      .status(500)
+      .send({ message: "Error adding collaborator", error: error.message });
+  }
+});
 
 module.exports = router;
