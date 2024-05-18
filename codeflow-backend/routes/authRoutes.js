@@ -3,6 +3,18 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const db = require("../database/connectPostgresDb");
 const { format } = require("date-fns");
+const jwt = require("jsonwebtoken");
+
+// Utility to generate JWT
+function generateToken(user) {
+  return jwt.sign(
+    { userId: user.user_id, email: user.email },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h", // Token expires in 1 hour
+    }
+  );
+}
 
 router.post("/signup", async (req, res) => {
   const { email, password, name } = req.body;
@@ -17,39 +29,26 @@ router.post("/signup", async (req, res) => {
       [email]
     );
     if (existingUser.rows.length > 0) {
-      const userEmail = existingUser.rows[0].email;
-      res.status(401).send({ message: "Email already exists" });
-    }
-
-    const existingUserName = await db.query(
-      "SELECT * FROM users WHERE users.username = $1",
-      [name]
-    );
-    if (existingUserName.rows.length > 0) {
-      const userName = existingUserName.rows[0].email;
-      res.status(400).send({ message: "Name already taken" });
+      return res.status(401).send({ message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const currentDate = new Date();
     const formattedDate = format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-    try {
-      const user = await db.query(
-        "INSERT INTO users (username, email, password_hash, join_date) VALUES ($1, $2, $3, $4) RETURNING * ",
-        [name, email, hashedPassword, formattedDate]
-      );
-      res.status(200).send({
-        message: "Credentials added successfully",
-        user: user.rows[0],
-      });
 
-      console.log("User saved successfully!");
-    } catch (error) {
-      console.error("Error saving user:", error);
-    }
+    const user = await db.query(
+      "INSERT INTO users (username, email, password_hash, join_date) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, email, hashedPassword, formattedDate]
+    );
+
+    const token = generateToken(user.rows[0]);
+    res.status(201).send({
+      message: "User registered successfully",
+      user: user.rows[0],
+      token,
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Error saving user:", error);
     res.status(500).send({ error: "Internal server error" });
   }
 });
@@ -74,21 +73,13 @@ router.post("/login", async (req, res) => {
       password,
       user.rows[0].password_hash
     );
-
     if (passwordMatch) {
-      console.log(user.rows.length);
-      const currentDate = new Date();
-      const formattedDate = format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-
-      const checkUpdateReq = await db.query(
-        "UPDATE users SET last_login = $1 WHERE email = $2",
-        [formattedDate, email]
-      );
-      if (checkUpdateReq) {
-        return res
-          .status(200)
-          .send({ message: "Login successful", user: user.rows[0] });
-      }
+      const token = generateToken(user.rows[0]);
+      res.status(200).send({
+        message: "Login successful",
+        user: user.rows[0],
+        token,
+      });
     } else {
       return res.status(401).send({ error: "Invalid password" });
     }
