@@ -71,13 +71,13 @@ export default function UserDashboard({ children }) {
   );
 
   return (
-    <div>
+    <div className="bg-theme_black">
       <IconButton
-        color="inherit"
+        color="white"
         aria-label="open drawer"
         edge="start"
         onClick={toggleDrawer("bottom", true)}
-        sx={{ marginLeft: "auto", marginRight: 2 }} // Position the button on the right
+        sx={{ color: "white", marginLeft: "auto", marginRight: 2 }} // Position the button on the right
       >
         <MenuIcon />
       </IconButton>

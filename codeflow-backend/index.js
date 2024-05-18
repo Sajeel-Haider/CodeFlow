@@ -13,6 +13,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const challengeRoutes = require("./routes/challengeRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const paymentRoutes = require("./routes/paymentRoute");
 const connectDB = require("./database/connectMongoDb");
 
 const app = express();
@@ -106,6 +107,7 @@ app.use(authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", projectRoutes);
 app.use("/api", challengeRoutes);
+app.use("/api", paymentRoutes);
 
 // Use the HTTP server to listen on the specified port, not the Express app
 const PORT = process.env.BACKEND_PORT || 8080;
