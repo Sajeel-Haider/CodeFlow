@@ -29,9 +29,9 @@ const Login = () => {
           setTimeout(() => {
             console.log(res.data.user.is_admin);
             if (res.data.user.is_admin) {
-              navigate("/adminDashboard");
+              navigate("/adminDashboard/dashboard");
             } else {
-              navigate("/userDashboard");
+              navigate("/userDashboard/dashboard");
             }
           }, 5000);
         }
