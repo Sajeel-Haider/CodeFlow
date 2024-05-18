@@ -55,7 +55,7 @@ const SignUp = () => {
   return (
     <>
       {" "}
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex min-h-screen bg-theme_black">
         <div
           className="lg:hidden absolute inset-0 bg-cover bg-center z-0"
           style={{ backgroundImage: `url(${signup_back})` }}
@@ -80,9 +80,9 @@ const SignUp = () => {
         </div>
 
         <div className="w-full lg:w-1/2 flex justify-center items-center bg-black bg-opacity-50 lg:bg-transparent z-10">
-          <div className=" m-4 max-w-md w-full bg-white p-12 rounded-2xl">
+          <div className="bg-black text-white m-4 max-w-md w-full p-12 rounded-2xl">
             <div className="text-right mb-4">
-              <span className="inline-block text-sm text-black bg-white p-2 rounded-2xl">
+              <span className="inline-block text-sm text-white bg-black p-2 rounded-2xl">
                 Already have an account?{" "}
                 <a href="/login" className="text-blue-500 hover:text-blue-700">
                   Sign In
@@ -97,7 +97,7 @@ const SignUp = () => {
                   <input
                     type="name"
                     placeholder="Name"
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2"
+                    className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2"
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
@@ -106,7 +106,7 @@ const SignUp = () => {
                   <input
                     type="email"
                     placeholder="Email"
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 "
+                    className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2 "
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
@@ -115,7 +115,7 @@ const SignUp = () => {
                   <input
                     type="password"
                     placeholder="Password"
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 "
+                    className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2 "
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
