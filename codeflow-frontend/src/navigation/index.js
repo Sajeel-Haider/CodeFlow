@@ -14,12 +14,14 @@ import CreateProject from "../pages/Dashboard/UserDashboard/CreateProject";
 import ProjectDetails from "../pages/Dashboard/UserDashboard/ProjectDetails";
 import Challenges from "../pages/Dashboard/UserDashboard/Challenges";
 import ChallengeDetails from "../pages/Dashboard/UserDashboard/ChallengeDetails";
+import Home from "../pages/Home/Home";
 
 const index = () => {
   const isAdmin = true; // Determine if user is admin
 
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
 
