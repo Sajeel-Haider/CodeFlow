@@ -57,7 +57,7 @@ export default function UserDashboard({ children }) {
             icon: <IoIosGitNetwork />,
             url: "repositories",
           },
-          { name: "Problems", icon: <FaCode />, url: "problems" },
+          { name: "Challenges", icon: <FaCode />, url: "challenges" },
           { name: "About us", icon: <MdQuestionMark />, url: "about" },
           { name: "Settings", icon: <IoMdSettings />, url: "settings" },
         ].map((item, index) => (

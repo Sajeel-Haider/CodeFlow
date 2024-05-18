@@ -10,6 +10,27 @@ CREATE TABLE users (
     premium_end_date TIMESTAMP WITH TIME ZONE
 );
 
+CREATE TABLE solved_questions (
+    solved_question_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    question_id INT, --mongo
+    stars_earned INT DEFAULT 0,
+    solved_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE contributions (
+    contribution_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    contribution_date DATE NOT NULL,
+    count INT DEFAULT 0
+);
+
+
+-- CREATE TABLE coding_questions (
+--     question_id SERIAL PRIMARY KEY,
+--     question_text TEXT NOT NULL,
+--     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- );
+--------------------------------------------
 CREATE TABLE rankings (
     ranking_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(user_id),

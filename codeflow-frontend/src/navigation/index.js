@@ -12,6 +12,8 @@ import AddProblem from "../pages/Dashboard/AdminDashboard/AddProblem";
 import Repositories from "../pages/Dashboard/UserDashboard/Repositories";
 import CreateProject from "../pages/Dashboard/UserDashboard/CreateProject";
 import ProjectDetails from "../pages/Dashboard/UserDashboard/ProjectDetails";
+import Challenges from "../pages/Dashboard/UserDashboard/Challenges";
+import ChallengeDetails from "../pages/Dashboard/UserDashboard/ChallengeDetails";
 
 const index = () => {
   const isAdmin = true; // Determine if user is admin
@@ -50,6 +52,11 @@ const index = () => {
               <Route path="repositories" element={<Repositories />}></Route>
               <Route path="createProject" element={<CreateProject />} />
               <Route path="projectDetails/:id" element={<ProjectDetails />} />
+              <Route path="challenges" element={<Challenges />} />
+              <Route
+                path="challenges/challengeDetails/:id"
+                element={<ChallengeDetails />}
+              />
             </Routes>
           </UserDashboard>
         }

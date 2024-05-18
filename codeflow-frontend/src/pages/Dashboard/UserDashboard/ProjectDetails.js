@@ -8,34 +8,66 @@ import CollaboratorModal from "../../../utils/Modals/CollaboratorModal";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { initSocket } from "../../../utils/Socket/socket";
+
 const ProjectDetails = () => {
+  const socketRef = useRef(null);
+  const [clients, setClient] = useState([]);
   const location = useLocation();
   const { project } = location.state;
+  const [projectDetails, setProjectDetails] = useState(project || []);
   const [selectedFile, setSelectedFile] = useState();
   const [files, setFiles] = useState(project.files || []);
   const navigate = useNavigate();
   const editorRef = useRef();
-  const socketRef = useRef();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleSocketError = (e) => {
+    console.log("socket error => ", e);
+  };
+  // useEffect(() => {
+  //   const init = async () => {
+  //     socketRef.current = await initSocket();
 
+  //     socketRef.current.on("connect_error", (err) => handleSocketError(err));
+  //     socketRef.current.on("connect_failed", (err) => handleSocketError(err));
+
+  //     socketRef.current.emit("join", {
+  //       project,
+  //     });
+  //   };
+  //   init();
+  // }, []);
   useEffect(() => {
-    // const socket = io(process.env.REACT_APP_API_URL || "http://localhost:8080");
-    // socket.on("connect", () => {
-    //   console.log("connected to server");
-    // });
-    // socketRef.current = socket;
-    // // Listen for file updates
-    // socket.on("file-updated", (updatedFile) => {
-    //   setFiles((prevFiles) =>
-    //     prevFiles.map((file) =>
-    //       file.file_name === updatedFile.file_name ? updatedFile : file
-    //     )
-    //   );
-    // });
-    // return () => {
-    //   socket.disconnect();
-    // };
-  }, []);
+    const init = async () => {
+      socketRef.current = await initSocket();
+
+      socketRef.current.on("connect_error", (err) => handleSocketError(err));
+      socketRef.current.on("connect_failed", (err) => handleSocketError(err));
+
+      // Join the room
+      socketRef.current.emit("join-room", {
+        projectId: project._id,
+      });
+
+      // Handle real-time code updates from other users
+
+      socketRef.current.on("code-update", ({ fileId, newContent }) => {
+        console.log(selectedFile);
+        if (fileId === selectedFile?._id) {
+          console.log("woroking", newContent);
+          setSelectedFile((prev) => ({
+            ...prev,
+            code_content: newContent,
+          }));
+        }
+      });
+    };
+    init();
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, [selectedFile, project._id]);
 
   useEffect(() => {
     if (files.length > 0) {
@@ -46,18 +78,31 @@ const ProjectDetails = () => {
   const handleFileClick = (file) => {
     setSelectedFile(file);
   };
-
   const handleChange = (newValue) => {
-    setSelectedFile((prevSelectedFile) => ({
-      ...prevSelectedFile,
-      code_content: newValue,
-    }));
-    socketRef.current.emit("update-file", {
-      fileId: selectedFile._id, // Assuming each file has a unique identifier
-      fileName: selectedFile.file_name,
-      newContent: newValue,
-    });
+    if (selectedFile && newValue !== selectedFile.code_content) {
+      setSelectedFile((prevSelectedFile) => ({
+        ...prevSelectedFile,
+        code_content: newValue,
+      }));
+      socketRef.current.emit("update-file", {
+        projectId: projectDetails._id,
+        fileId: selectedFile._id,
+        newContent: newValue,
+      });
+    }
   };
+
+  // const handleChange = (newValue) => {
+  //   setSelectedFile((prevSelectedFile) => ({
+  //     ...prevSelectedFile,
+  //     code_content: newValue,
+  //   }));
+  //   socketRef.current.emit("update-file", {
+  //     fileId: selectedFile._id, // Assuming each file has a unique identifier
+  //     fileName: selectedFile.file_name,
+  //     newContent: newValue,
+  //   });
+  // };
   const addCollaborator = async (projectId, email, permission) => {
     console.log(projectId);
     try {
