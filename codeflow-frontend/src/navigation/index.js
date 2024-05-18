@@ -15,6 +15,7 @@ import ProjectDetails from "../pages/Dashboard/UserDashboard/ProjectDetails";
 import Challenges from "../pages/Dashboard/UserDashboard/Challenges";
 import ChallengeDetails from "../pages/Dashboard/UserDashboard/ChallengeDetails";
 import Home from "../pages/Home/Home";
+import About from "../pages/Dashboard/About/About";
 
 const index = () => {
   const isAdmin = true; // Determine if user is admin
@@ -24,6 +25,7 @@ const index = () => {
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/about" element={<About />} />
 
       <Route
         path="/adminDashboard"
