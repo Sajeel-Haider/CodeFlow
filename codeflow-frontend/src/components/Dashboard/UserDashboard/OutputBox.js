@@ -19,7 +19,7 @@ const OutputBox = ({ codeRef, language }) => {
   };
 
   return (
-    <div className="flex flex-col w-1/2 p-4">
+    <div className="flex flex-col  p-4">
       <Button text="Output" onClick={runCode}></Button>
       <div className="h-full p-4 mt-4 border">{output}</div>
     </div>

@@ -13,12 +13,18 @@ const RepositoryCard = ({
       onClick={onClick}
     >
       <div>
-        <h1 className="text-4xl">{projectName}</h1>
+        <h1 className="text-xl md:text-4xl">{projectName}</h1>
       </div>
       <div className="flex justify-around mt-4">
-        <p>Created Date: {formattedCreationDate}</p>
-        <p>Last Updated: {lastUpdated ? <>{lastUpdated}</> : <>None</>}</p>
-        <p>Number of Collaborators: {numCollaborators}</p>
+        <p className="text-sm md:text-xl">
+          Created Date: {formattedCreationDate}
+        </p>
+        <p className="text-sm md:text-xl">
+          Last Updated: {lastUpdated ? <>{lastUpdated}</> : <>None</>}
+        </p>
+        <p className="text-sm md:text-xl">
+          Number of Collaborators: {numCollaborators}
+        </p>
       </div>
     </div>
   );

@@ -124,7 +124,7 @@ const Home = () => {
         </div>
       )}
 
-      <div className="relative bg-theme_black text-white min-h-screen overflow-hidden">
+      <div className="relative bg-theme_black text-white min-h-screen overflow-hidden ">
         {/* Background Circles */}
         <div className="background-circle circle-large"></div>
         <div className="background-circle circle-medium"></div>

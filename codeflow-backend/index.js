@@ -53,31 +53,32 @@ io.on("connection", (socket) => {
     socket.projectId = projectId;
   });
 
+  // Server-side logic when a file is updated
   socket.on("update-file", async ({ projectId, fileId, newContent }) => {
-    // Ensure projectId is used from the event data
-    socket.to(projectId).emit("code-update", { fileId, newContent });
-    console.log(projectId, fileId, newContent);
-    // Update the database
     try {
-      const result = await Project.updateOne(
-        { _id: projectId, "files._id": fileId },
-        {
-          $set: {
-            "files.$.code_content": newContent,
-            last_updated: new Date(), // Updating the last_updated field at the project level
-          },
-        }
-      );
+      const updateDatabase = async () => {
+        const result = await Project.updateOne(
+          { _id: projectId, "files._id": fileId },
+          {
+            $set: {
+              "files.$.code_content": newContent,
+              last_updated: new Date(),
+            },
+          }
+        );
 
-      if (result.modifiedCount === 1) {
-        console.log("File updated in database");
-        socket.to(projectId).emit("code-update", { fileId, newContent });
-      } else {
-        console.log("No document was updated");
-      }
+        if (result.modifiedCount === 1) {
+          console.log("File updated in database");
+          // Emit update to all clients in the project room except the sender
+        }
+      };
+
+      setTimeout(updateDatabase, 2000);
+
+      socket.to(projectId).emit("code-update", { fileId, newContent });
     } catch (error) {
       console.error("Error updating file in database", error);
-      // Handle error appropriately
+      socket.emit("update-error", { message: "Failed to update file." });
     }
   });
 });

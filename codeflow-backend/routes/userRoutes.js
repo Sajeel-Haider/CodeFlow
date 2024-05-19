@@ -40,4 +40,26 @@ router.delete("/deleteUser/:id", async (req, res) => {
   }
 });
 
+router.get("/user/stats/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const query = `
+          SELECT COUNT(*) AS problems_solved, AVG(stars_earned) AS average_stars
+          FROM solved_questions
+          WHERE user_id = $1;
+      `;
+    const { rows } = await db.query(query, [userId]);
+    if (rows.length > 0) {
+      res.json({
+        problemsSolved: parseInt(rows[0].problems_solved),
+        averageStars: parseFloat(rows[0].average_stars).toFixed(1),
+      });
+    } else {
+      res.json({ problemsSolved: 0, averageStars: 0 });
+    }
+  } catch (error) {
+    console.error("Error fetching user stats:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 module.exports = router;

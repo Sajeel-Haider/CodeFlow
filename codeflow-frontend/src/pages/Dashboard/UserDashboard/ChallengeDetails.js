@@ -16,7 +16,7 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import OpenAI from "openai";
+import { OpenAI } from "openai";
 import { useSelector } from "react-redux";
 
 const extensions = [javascript({ jsx: true })];
@@ -142,23 +142,37 @@ const ChallengeDetails = () => {
   const getAIHelp = async () => {
     setLoadingAI(true);
     setShowModal(true);
+    console.log(process.env.REACT_APP_OPENAI_API_KEY);
+
     try {
       const openai = new OpenAI({
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true,
       });
-
-      const chatCompletion = await openai.chat.completions.create({
-        messages: [
-          {
-            role: "user",
-            content: `Explain the code for ${codeDetails.question} in python.`,
-          },
-        ],
-        model: "gpt-3.5-turbo",
-      });
+      // const openai = new OpenAI({
+      //   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+      //   dangerouslyAllowBrowser: true,
+      // });
+      try {
+        const response = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+        });
+        setAIResponse(response.choices[0].message.content);
+        console.log(response.choices[0].message.content);
+      } catch (error) {
+        console.error("Error fetching response:", error);
+      }
+      // const chatCompletion = await openai.chat.completions.create({
+      //   messages: [
+      //     {
+      //       role: "user",
+      //       content: `Explain the code for ${codeDetails.question} in python.`,
+      //     },
+      //   ],
+      //   model: "gpt-3.5-turbo",
+      // });
       //console.log(chatCompletion.choices[0].message.content);
-      setAIResponse(chatCompletion.choices[0].message.content);
     } catch (err) {
       console.log(err);
     } finally {
@@ -199,9 +213,9 @@ const ChallengeDetails = () => {
               <br />
               <div
                 style={{
-                  backgroundColor: "lightgray",
                   padding: "10px",
                   borderRadius: "2px",
+                  backgroundColor: "#003C43",
                 }}
               >
                 <div>Inputs: {codeDetails.input}</div>
@@ -210,6 +224,8 @@ const ChallengeDetails = () => {
               <br />
               <Button
                 onClick={getSolution}
+                padding={10}
+                borderRadius={10}
                 _hover={{ bg: "black", color: "white" }}
                 bgColor="white" // Set background color to black
                 color="black" // Set text color to white
@@ -250,6 +266,8 @@ const ChallengeDetails = () => {
               <br />
               <Button
                 onClick={getAIHelp}
+                padding={10}
+                borderRadius={10}
                 _hover={{ bg: "black", color: "white" }}
                 bgColor="white"
                 color="black"
@@ -267,6 +285,7 @@ const ChallengeDetails = () => {
       <Button
         onClick={getOutput}
         _hover={{ bg: "black", color: "white" }}
+        style={{ backgroundColor: "#003C43", padding: 10, borderRadius: 10 }}
         bgColor="black"
         color="white"
         isLoading={isLoading}

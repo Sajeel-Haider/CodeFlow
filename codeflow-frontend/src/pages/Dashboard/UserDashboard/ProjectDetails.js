@@ -9,6 +9,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { initSocket } from "../../../utils/Socket/socket";
+import { debounce } from "lodash";
 
 const ProjectDetails = () => {
   const socketRef = useRef(null);
@@ -24,6 +25,7 @@ const ProjectDetails = () => {
   const handleSocketError = (e) => {
     console.log("socket error => ", e);
   };
+
   // useEffect(() => {
   //   const init = async () => {
   //     socketRef.current = await initSocket();
@@ -44,17 +46,15 @@ const ProjectDetails = () => {
       socketRef.current.on("connect_error", (err) => handleSocketError(err));
       socketRef.current.on("connect_failed", (err) => handleSocketError(err));
 
-      // Join the room
-      socketRef.current.emit("join-room", {
-        projectId: project._id,
-      });
-
-      // Handle real-time code updates from other users
+      socketRef.current.emit("join-room", { projectId: project._id });
 
       socketRef.current.on("code-update", ({ fileId, newContent }) => {
-        console.log(selectedFile);
-        if (fileId === selectedFile?._id) {
-          console.log("woroking", newContent);
+        if (
+          fileId === selectedFile?._id &&
+          newContent !== selectedFile.code_content
+        ) {
+          // Update editor content only if it's different from the current content
+          console.log("Update received", newContent);
           setSelectedFile((prev) => ({
             ...prev,
             code_content: newContent,
@@ -62,12 +62,13 @@ const ProjectDetails = () => {
         }
       });
     };
+
     init();
 
     return () => {
       socketRef.current?.disconnect();
     };
-  }, [selectedFile, project._id]);
+  }, [selectedFile, project._id]); // Dependency on selectedFile and project._id
 
   useEffect(() => {
     if (files.length > 0) {
@@ -146,13 +147,13 @@ const ProjectDetails = () => {
   };
 
   return (
-    <div className="text-black">
+    <div className="text-white h-screen">
       <Button
         text="Back"
         onClick={() => navigate("/userDashboard/repositories")}
       />
-      <div className="flex">
-        <div className="w-1/4 overflow-auto">
+      <div className="flex flex-col md:flex-row md:flex">
+        <div className=" overflow-auto">
           {files.map((file, index) => (
             <div
               key={index}
@@ -164,27 +165,31 @@ const ProjectDetails = () => {
           ))}
         </div>
         <div className="flex-grow w-1/2 mt-8">
-          <Button
-            text={"Add Collaborator"}
-            onClick={() => setIsModalOpen(true)}
-          />
-          <Editor
-            height="70vh"
-            theme="vs-dark"
-            onMount={onMount}
-            language={
-              selectedFile
-                ? fileToLanguage(selectedFile.file_name)
-                : "plaintext"
-            }
-            value={
-              selectedFile ? selectedFile.code_content : "// Select a file..."
-            }
-            onChange={handleChange}
-            options={{
-              selectOnLineNumbers: true,
-            }}
-          />
+          <div className="mb-4">
+            <Button
+              text={"Add Collaborator"}
+              onClick={() => setIsModalOpen(true)}
+            />
+          </div>
+          <div className="w-80 md:w-full">
+            <Editor
+              height="70vh"
+              theme="vs-dark"
+              onMount={onMount}
+              language={
+                selectedFile
+                  ? fileToLanguage(selectedFile.file_name)
+                  : "plaintext"
+              }
+              value={
+                selectedFile ? selectedFile.code_content : "// Select a file..."
+              }
+              onChange={handleChange}
+              options={{
+                selectOnLineNumbers: true,
+              }}
+            />
+          </div>
         </div>
         {selectedFile && (
           <OutputBox

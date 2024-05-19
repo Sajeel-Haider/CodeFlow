@@ -67,9 +67,15 @@ const AllCodes = () => {
   };
 
   return (
-    <Box marginX={20} marginTop={10} style={{ color: "black" }}>
+    <Box
+      marginX={20}
+      marginTop={10}
+      style={{ color: "white" }}
+      className="h-screen text-white"
+    >
       <div
         style={{
+          color: "white",
           position: "fixed",
           left: 2,
           bottom: 0,
@@ -81,7 +87,7 @@ const AllCodes = () => {
           width: "100%",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", color: "white" }}>
           <Text fontWeight="bold">{authUser.name}</Text>
           <Icon as={FaSignOutAlt} w={6} h={6} ml={3} />
         </div>
@@ -89,7 +95,15 @@ const AllCodes = () => {
 
       <Tabs>
         <TabList>
-          <Tab _selected={{ color: "white", bg: "black" }}>
+          <Tab
+            marginRight={30}
+            _selected={{
+              color: "black",
+              bg: "white",
+              borderRadius: "10px",
+              padding: 10,
+            }}
+          >
             Numbers ({solvedQuestionsNumbers.Numbers}/
             {
               codeArray.filter((codeData) => codeData.label === "numbers")
@@ -97,12 +111,27 @@ const AllCodes = () => {
             }
             )
           </Tab>
-          <Tab _selected={{ color: "white", bg: "black" }}>
+          <Tab
+            marginRight={30}
+            _selected={{
+              color: "black",
+              bg: "white",
+              borderRadius: "10px",
+              padding: 10,
+            }}
+          >
             Arrays ({solvedQuestionsNumbers.Arrays}/
             {codeArray.filter((codeData) => codeData.label === "arrays").length}
             )
           </Tab>
-          <Tab _selected={{ color: "white", bg: "black" }}>
+          <Tab
+            _selected={{
+              color: "black",
+              bg: "white",
+              borderRadius: "10px",
+              padding: 10,
+            }}
+          >
             Linked Lists ({solvedQuestionsNumbers.LinkedLists}/
             {
               codeArray.filter((codeData) => codeData.label === "linked_lists")
@@ -120,20 +149,27 @@ const AllCodes = () => {
                   codeData.label === "numbers" && (
                     <Box
                       key={codeData._id}
-                      p={4}
+                      p={16}
                       borderWidth="1px"
-                      borderRadius="lg"
                       display="flex"
                       justifyContent="space-between"
                       alignItems="center"
-                      marginY={5}
+                      marginY={20}
+                      borderRadius="10"
                     >
                       <div>
                         <h3>{codeData.question}</h3>
                         <Stars stars={codeData.stars} />
                       </div>
                       <Button
-                        _hover={{ bg: "black", color: "white" }}
+                        _hover={{
+                          bg: "black",
+                          color: "white",
+                          borderRadius: "10px",
+                          padding: 10,
+                        }}
+                        borderRadius={10}
+                        padding={10}
                         bgColor="white"
                         color="black"
                         border="1px solid black"

@@ -41,22 +41,76 @@ export default function UserDashboard({ children }) {
 
   const list = (anchor) => (
     <Box
+      style={{
+        backgroundColor: "#003C43",
+        color: "white",
+      }}
       sx={{ width: anchor === "bottom" ? "auto" : 250 }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List>
+      <List
+        style={{
+          color: "white",
+        }}
+      >
         {[
-          { name: "Dashboard", icon: <MdSpaceDashboard />, url: "dashboard" },
+          {
+            name: "Dashboard",
+            icon: (
+              <MdSpaceDashboard
+                style={{
+                  color: "white",
+                }}
+              />
+            ),
+            url: "dashboard",
+          },
           {
             name: "Repositories",
-            icon: <IoIosGitNetwork />,
+            icon: (
+              <IoIosGitNetwork
+                style={{
+                  color: "white",
+                }}
+              />
+            ),
             url: "repositories",
           },
-          { name: "Challenges", icon: <FaCode />, url: "challenges" },
-          { name: "About us", icon: <MdQuestionMark />, url: "about" },
-          { name: "Settings", icon: <IoMdSettings />, url: "settings" },
+          {
+            name: "Challenges",
+            icon: (
+              <FaCode
+                style={{
+                  color: "white",
+                }}
+              />
+            ),
+            url: "challenges",
+          },
+          // {
+          //   name: "About us",
+          //   icon: (
+          //     <MdQuestionMark
+          //       style={{
+          //         color: "white",
+          //       }}
+          //     />
+          //   ),
+          //   url: "about",
+          // },
+          // {
+          //   name: "Settings",
+          //   icon: (
+          //     <IoMdSettings
+          //       style={{
+          //         color: "white",
+          //       }}
+          //     />
+          //   ),
+          //   url: "settings",
+          // },
         ].map((item, index) => (
           <ListItem key={item.name} disablePadding>
             <ListItemButton onClick={() => updateNavigateUrl(item.url)}>

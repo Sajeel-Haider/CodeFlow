@@ -64,21 +64,21 @@ const CreateProject = () => {
   return (
     <>
       {" "}
-      <div className="mb-8">
+      <div className=" ">
         <Button
           type="submit"
           text="Back"
           onClick={() => navigate("/userDashboard/repositories")}
         />
       </div>
-      <div className="text-black flex flex-col justify-center items-center ">
-        <div className="p-8 border w-9/12 flex flex-col items-center">
+      <div className="text-white flex flex-col justify-center items-center ">
+        <div className="p-8  w-9/12 flex flex-col items-center h-screen">
           <div>
-            <h1 className="text-4xl">Create new project</h1>
+            <h1 className="text-xl md:text-4xl mb-4">Create new project</h1>
           </div>
           <form onSubmit={handleSubmit} className="flex flex-col ">
             <input
-              className="border rounded p-2 mt-2"
+              className="border rounded p-2 mt-2 bg-black"
               name="projectName"
               type="text"
               placeholder="Project Name"
@@ -86,7 +86,7 @@ const CreateProject = () => {
               onChange={(e) => setProjectName(e.target.value)}
             />
             <textarea
-              className="border mt-4 rounded p-2"
+              className="border mt-4 rounded p-2 bg-black"
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -95,7 +95,7 @@ const CreateProject = () => {
               <label className="mr-4">
                 Public
                 <input
-                  className="ml-2"
+                  className="ml-2 bg-black"
                   type="radio"
                   checked={isPublic === true}
                   onChange={() => setIsPublic(true)}
@@ -104,7 +104,7 @@ const CreateProject = () => {
               <label>
                 Private
                 <input
-                  className="ml-2"
+                  className="ml-2 bg-black"
                   type="radio"
                   checked={isPublic === false}
                   onChange={() => setIsPublic(false)}
