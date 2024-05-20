@@ -9,18 +9,14 @@ import { Route, Navigate } from "react-router-dom";
  */
 const PrivateRoute = ({ children, roleRequired }) => {
   const user = JSON.parse(localStorage.getItem("user")) || {};
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true"; // Ensure to handle boolean as string from storage
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
-  // Check if user is authenticated and if the user role matches the role required for the route
   if (!isAuthenticated) {
-    // If user is not authenticated, redirect to login page
     return <Navigate to="/login" replace />;
   } else if (roleRequired && user.is_admin !== roleRequired) {
-    // If user role does not match the role required, redirect to the home page or a forbidden access page
     return <Navigate to="/" replace />;
   }
 
-  // If all conditions are met, render the children components
   return children ? children : null;
 };
 

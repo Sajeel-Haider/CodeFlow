@@ -18,8 +18,10 @@ import Home from "../pages/Home/Home";
 import About from "../pages/Dashboard/About/About";
 import Dashboard from "../pages/Dashboard/UserDashboard/Dashboard";
 import Payment from "../pages/Dashboard/UserDashboard/Payment";
+
 const index = () => {
   const user = localStorage.getItem("user");
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
