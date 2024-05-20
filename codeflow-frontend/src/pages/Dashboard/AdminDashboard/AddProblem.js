@@ -1,100 +1,198 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-const AddProblem = () => {
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+const QuestionForm = () => {
+  const [formData, setFormData] = useState({
+    question: "",
+    description: "",
+    fname: "",
+    post: "",
+    label: "",
+    isArray: false,
+    input: "",
+    output: "",
+    testcases: [{ inputs: [], expectedOutput: "" }],
+    function: "",
+    solution: "",
+  });
 
-  const handleSelectDifficulty = (e) => {
-    setSelectedDifficulty(e.target.value);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleCheckboxChange = () => {
+    setFormData({
+      ...formData,
+      isArray: !formData.isArray,
+    });
+  };
+
+  const handleTestCaseChange = (index, field, value) => {
+    const updatedTestCases = formData.testcases.map((testcase, i) => {
+      if (i === index) {
+        return {
+          ...testcase,
+          [field]: field === "inputs" ? value.split(",").map(Number) : value,
+        };
+      }
+      return testcase;
+    });
+    setFormData({ ...formData, testcases: updatedTestCases });
+  };
+
+  const addTestCase = () => {
+    setFormData({
+      ...formData,
+      testcases: [...formData.testcases, { inputs: [], expectedOutput: "" }],
+    });
+  };
+
+  const removeTestCase = (index) => {
+    setFormData({
+      ...formData,
+      testcases: formData.testcases.filter((_, i) => i !== index),
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/questions`,
+        formData
+      );
+      console.log(response.data);
+      alert("Question added successfully!");
+    } catch (error) {
+      console.error("Error posting question:", error);
+      alert("Failed to add question");
+    }
+  };
+
   return (
-    <div className="p-4 bg-white rounded-xl text-black">
-      <h1 className="text-xl">Register Problem</h1>
-      <div className="">
-        <div className="flex flex-col mt-4">
-          <label for="problemStatement">Problem Statement</label>
-          <textarea
-            name="problemStatement"
-            id="problemStatement"
-            cols="30"
-            rows="10"
-            className="p-4 rounded-lg mt-2 border border-gray-300 h-24 w-full"
-          ></textarea>
+    <form onSubmit={handleSubmit} className="text-black p-4 space-y-3 bg-white">
+      <input
+        type="text"
+        name="question"
+        value={formData.question}
+        onChange={handleInputChange}
+        placeholder="Question"
+      />
+
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        placeholder="Description"
+        className="textarea textarea-bordered w-full max-w-xs border p-4"
+      />
+      <input
+        type="text"
+        name="fname"
+        value={formData.fname}
+        onChange={handleChange}
+        placeholder="Function Name"
+        className="input input-bordered w-full max-w-xs border p-4"
+      />
+      <input
+        type="text"
+        name="post"
+        value={formData.post}
+        onChange={handleChange}
+        placeholder="Post Code"
+        className="input input-bordered w-full max-w-xs border p-4"
+      />
+      <input
+        type="text"
+        name="label"
+        value={formData.label}
+        onChange={handleChange}
+        placeholder="Label"
+        className="input input-bordered w-full max-w-xs border p-4"
+      />
+      <input
+        type="text"
+        name="input"
+        value={formData.input}
+        onChange={handleChange}
+        placeholder="Input"
+        className="input input-bordered w-full max-w-xs border p-4"
+      />
+      <input
+        type="text"
+        name="output"
+        value={formData.output}
+        onChange={handleChange}
+        placeholder="Output"
+        className="input input-bordered w-full max-w-xs border p-4"
+      />
+      <label className="label cursor-pointer">
+        <span className="label-text">Is Array?</span>
+        <input
+          type="checkbox"
+          name="isArray"
+          checked={formData.isArray}
+          onChange={handleCheckboxChange}
+          className="checkbox checkbox-primary p-4"
+        />
+      </label>
+      <input
+        type="text"
+        name="function"
+        value={formData.function}
+        onChange={handleInputChange}
+        placeholder="Function"
+      />
+      <input
+        type="text"
+        name="solution"
+        value={formData.solution}
+        onChange={handleInputChange}
+        placeholder="Solution"
+      />
+
+      {formData.testcases.map((testcase, index) => (
+        <div key={index}>
+          <input
+            type="text"
+            value={testcase.inputs.join(",")}
+            onChange={(e) =>
+              handleTestCaseChange(index, "inputs", e.target.value)
+            }
+            placeholder="Inputs (comma-separated)"
+          />
+          <input
+            type="text"
+            value={testcase.expectedOutput}
+            onChange={(e) =>
+              handleTestCaseChange(index, "expectedOutput", e.target.value)
+            }
+            placeholder="Expected Output"
+          />
+          <button type="button" onClick={() => removeTestCase(index)}>
+            Remove
+          </button>
         </div>
-      </div>
-      <div className="flex">
-        <div className="flex flex-col mt-4 mr-4">
-          <label for="inputFormat">Input format</label>
-          <textarea
-            name="inputFormat"
-            id="inputFormat"
-            cols="30"
-            rows="10"
-            className="p-4 rounded-lg mt-2 border border-gray-300 h-24 w-full"
-          ></textarea>
-        </div>
-        <div className="flex flex-col mt-4">
-          <label for="Output format">Output format</label>
-          <textarea
-            name="outputFormat"
-            id="outputFormat"
-            cols="30"
-            rows="10"
-            className="p-4 rounded-lg mt-2 border border-gray-300 h-24 w-full"
-          ></textarea>
-        </div>
-      </div>
-      <div className="flex">
-        <div className="flex flex-col mt-4 mr-4">
-          <label for="inputSample">Input Sample</label>
-          <textarea
-            name="inputSample"
-            id="inputSample"
-            cols="30"
-            rows="10"
-            className="p-4 rounded-lg mt-2 border border-gray-300 h-24 w-full"
-          ></textarea>
-        </div>
-        <div className="flex flex-col mt-4">
-          <label for="outputSample">Output Sample</label>
-          <textarea
-            name="outputSample"
-            id="outputSample"
-            cols="30"
-            rows="10"
-            className="p-4 rounded-lg mt-2 border border-gray-300 h-24 w-full"
-          ></textarea>
-        </div>
-      </div>
-      <div className="relative">
-        <select
-          value={selectedDifficulty}
-          onChange={handleSelectDifficulty}
-          className="block appearance-none w-full mt-4 bg-white border border-gray-300 hover:border-gray-500 px-4 py-3 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-        >
-          <option value="">Select Difficulty</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-          <option value="very hard">Very Hard</option>
-        </select>
-        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 12a1 1 0 01-.707-.293l-4-4a1 1 0 011.414-1.414L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-.707.293z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
+      ))}
+      <button type="button" onClick={addTestCase}>
+        Add Test Case
+      </button>
+
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 
-export default AddProblem;
+export default QuestionForm;

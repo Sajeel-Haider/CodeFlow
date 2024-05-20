@@ -1,9 +1,12 @@
 import React, { useCallback, useState } from "react";
+
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import Button from "../../../utils/Buttons/Button";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+
+import Button from "../../../utils/Buttons/Button";
+
 const CreateProject = () => {
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
@@ -38,7 +41,7 @@ const CreateProject = () => {
     const formData = new FormData();
     formData.append("project_name", projectName);
     formData.append("description", description);
-    formData.append("created_by", authUser.user_id); // Replace 'authUser' with actual user ID or variable
+    formData.append("created_by", authUser.user_id); 
     formData.append("is_public", isPublic);
     formData.append("language", language);
     files.forEach((file) => {

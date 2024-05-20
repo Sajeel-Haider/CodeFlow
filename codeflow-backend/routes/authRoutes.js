@@ -5,13 +5,12 @@ const db = require("../database/connectPostgresDb");
 const { format } = require("date-fns");
 const jwt = require("jsonwebtoken");
 
-// Utility to generate JWT
 function generateToken(user) {
   return jwt.sign(
     { userId: user.user_id, email: user.email },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1h", // Token expires in 1 hour
+      expiresIn: "1h",
     }
   );
 }

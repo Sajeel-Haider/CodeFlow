@@ -20,10 +20,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Create an HTTP server and attach the express app to it
 const server = http.createServer(app);
 
-// Socket.io server setup with the same HTTP server
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
@@ -46,14 +44,12 @@ io.on("connection", (socket) => {
   console.log("User connected", socket.id);
 
   socket.on("join-room", ({ projectId }) => {
-    socket.join(projectId); // Join a unique room per project
+    socket.join(projectId);
     console.log(`Socket ${socket.id} joined room ${projectId}`);
 
-    // Store projectId in the socket session for later use
     socket.projectId = projectId;
   });
 
-  // Server-side logic when a file is updated
   socket.on("update-file", async ({ projectId, fileId, newContent }) => {
     try {
       const updateDatabase = async () => {
@@ -69,7 +65,6 @@ io.on("connection", (socket) => {
 
         if (result.modifiedCount === 1) {
           console.log("File updated in database");
-          // Emit update to all clients in the project room except the sender
         }
       };
 
@@ -83,34 +78,14 @@ io.on("connection", (socket) => {
   });
 });
 
-// // Socket.io connection event
-// io.on("connection", (socket) => {
-//   console.log("a user connected", socket.id);
-//   socket.on("join", (project) => {
-//     console.log(project.project.project_id);
-//     console.log("user disconnected", socket.id);
-
-//     userSocketMap[socket.id] = project.project.created_by;
-//     socket.join(project.project.project_id);
-//     const clients = getAllConnectedClients(project.project.project_id);
-//     console.log(clients);
-//   });
-//   socket.on("disconnect", () => {
-//     console.log("user disconnected", socket.id);
-//   });
-// });
-
-// Connect to the MongoDB database
 connectDB();
 
-// Apply routes to the Express application
 app.use(authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", projectRoutes);
 app.use("/api", challengeRoutes);
 app.use("/api", paymentRoutes);
 
-// Use the HTTP server to listen on the specified port, not the Express app
 const PORT = process.env.BACKEND_PORT || 8080;
 server.listen(PORT, () => {
   console.log("Server running on PORT: ", PORT);

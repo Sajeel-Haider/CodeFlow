@@ -24,7 +24,7 @@ const extensions = [javascript({ jsx: true })];
 const ChallengeDetails = () => {
   const authUser = useSelector((state) => state.user);
   const location = useLocation();
-  const { id } = location.state || {}; // Fallback to an empty object if no state is passed
+  const { id } = location.state || {}; 
 
   const [codeDetails, setCodeDetails] = useState({});
   const [show, setShow] = useState(false);
@@ -38,7 +38,6 @@ const ChallengeDetails = () => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Make an API request to fetch code details by ID
     console.log(id);
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/code/${id}`)
@@ -73,72 +72,6 @@ const ChallengeDetails = () => {
     }
   };
 
-  const getSolution = async () => {
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/managecreds`,
-        {
-          email: authUser.email,
-        }
-      );
-
-      if (res.data.success) {
-        setCredits(true);
-        setShow(true);
-      } else {
-        setCredits(false);
-        setShow(true);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handlePayment = async () => {
-    const options = {
-      key: process.env.REACT_APP_RAZORPAY_KEY,
-      key_secret: process.env.REACT_APP_RAZORPAY_KEY_SECRET,
-      amount: 100 * 100,
-      currency: "INR",
-      name: "Nimbus 2023",
-      description: "Credits",
-      handler: function (response) {
-        console.log(response);
-        alert("payment done");
-      },
-      prefill: {
-        name: "Nimbus 2023",
-        email: "payment@nimbus.com",
-        contact: "7878787832",
-      },
-      notes: {
-        address: "Nimbus Corporate office",
-      },
-      theme: {
-        color: "#F37254",
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-
-    //now credit 100 to user
-    setTimeout(async () => {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/addcredits`,
-        {
-          email: authUser.email,
-        }
-      );
-
-      if (res.data.success) {
-        setCredits(true);
-      } else {
-        setCredits(false);
-      }
-    }, 12000);
-  };
-
   const getAIHelp = async () => {
     setLoadingAI(true);
     setShowModal(true);
@@ -149,30 +82,23 @@ const ChallengeDetails = () => {
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true,
       });
-      // const openai = new OpenAI({
-      //   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
-      //   dangerouslyAllowBrowser: true,
-      // });
+     
       try {
         const response = await openai.chat.completions.create({
           model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }],
+          messages: [
+            {
+              role: "user",
+              content: `Explain the code for ${codeDetails.question} in python.`,
+            },
+          ],
         });
         setAIResponse(response.choices[0].message.content);
         console.log(response.choices[0].message.content);
       } catch (error) {
         console.error("Error fetching response:", error);
       }
-      // const chatCompletion = await openai.chat.completions.create({
-      //   messages: [
-      //     {
-      //       role: "user",
-      //       content: `Explain the code for ${codeDetails.question} in python.`,
-      //     },
-      //   ],
-      //   model: "gpt-3.5-turbo",
-      // });
-      //console.log(chatCompletion.choices[0].message.content);
+   
     } catch (err) {
       console.log(err);
     } finally {
@@ -222,17 +148,7 @@ const ChallengeDetails = () => {
                 <div>Sample Output: {codeDetails.output}</div>
               </div>
               <br />
-              <Button
-                onClick={getSolution}
-                padding={10}
-                borderRadius={10}
-                _hover={{ bg: "black", color: "white" }}
-                bgColor="white" // Set background color to black
-                color="black" // Set text color to white
-                border="1px solid black"
-              >
-                Get Solution 👩‍💻
-              </Button>
+
               <div>
                 {show === true && credits === true ? (
                   <pre
@@ -252,7 +168,6 @@ const ChallengeDetails = () => {
                       Oops! Seems like you are out of credits 🥴
                     </p>
                     <Button
-                      onClick={handlePayment}
                       size="sm"
                       _hover={{ bg: "green", color: "white" }}
                       colorScheme="red"
@@ -264,17 +179,19 @@ const ChallengeDetails = () => {
               </div>
 
               <br />
-              <Button
-                onClick={getAIHelp}
-                padding={10}
-                borderRadius={10}
-                _hover={{ bg: "black", color: "white" }}
-                bgColor="white"
-                color="black"
-                border="1px solid black"
-              >
-                Try Nimbus AI ✨
-              </Button>
+              {authUser?.is_premium && (
+                <Button
+                  onClick={getAIHelp}
+                  padding={10}
+                  borderRadius={10}
+                  _hover={{ bg: "black", color: "white" }}
+                  bgColor="white"
+                  color="black"
+                  border="1px solid black"
+                >
+                  Try AI ✨
+                </Button>
+              )}
             </div>
           ) : (
             <></>
@@ -295,8 +212,8 @@ const ChallengeDetails = () => {
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="2xl">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Nimbus AI ✨</ModalHeader>
+        <ModalContent backgroundColor={"white"}>
+          <ModalHeader>Open AI ✨</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {loadingAI ? (
@@ -315,17 +232,7 @@ const ChallengeDetails = () => {
               <p>No AI response available.</p>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={() => setShowModal(false)}
-              _hover={{ bg: "black", color: "white" }}
-              bgColor="white"
-              color="black"
-              border="1px solid black"
-            >
-              Close
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </Box>

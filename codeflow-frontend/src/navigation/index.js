@@ -18,10 +18,8 @@ import Home from "../pages/Home/Home";
 import About from "../pages/Dashboard/About/About";
 import Dashboard from "../pages/Dashboard/UserDashboard/Dashboard";
 import Payment from "../pages/Dashboard/UserDashboard/Payment";
-
 const index = () => {
-  const isAdmin = true; // Determine if user is admin
-
+  const user = localStorage.getItem("user");
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -31,11 +29,13 @@ const index = () => {
 
       <Route
         path="/adminDashboard"
-        element={<PrivateRoute component={<AdminDashboard />} />}
+        element={
+          <PrivateRoute component={AdminDashboard} roleRequired="admin" />
+        }
       />
       <Route
         path="/userDashboard"
-        element={<PrivateRoute component={<UserDashboard />} />}
+        element={<PrivateRoute component={UserDashboard} roleRequired="user" />}
       />
       <Route
         path="/adminDashboard/*"
@@ -54,9 +54,10 @@ const index = () => {
         element={
           <UserDashboard>
             <Routes>
+              <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />
-              <Route path="repositories" element={<Repositories />}></Route>
+              <Route path="repositories" element={<Repositories />} />
               <Route path="createProject" element={<CreateProject />} />
               <Route path="projectDetails/:id" element={<ProjectDetails />} />
               <Route path="challenges" element={<Challenges />} />

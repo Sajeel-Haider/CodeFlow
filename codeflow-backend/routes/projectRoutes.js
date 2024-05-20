@@ -37,7 +37,7 @@ router.post("/createProject", upload.array("files"), async (req, res) => {
     await newProject.save();
     res.status(201).send({
       message: "Project created successfully",
-      project_id: newProject._id, // Make sure you use the correct ID field name
+      project_id: newProject._id, 
     });
   } catch (error) {
     console.error("Error creating project:", error);
@@ -57,23 +57,23 @@ router.get("/projects", async (req, res) => {
 });
 
 router.get("/projects/:user_id", async (req, res) => {
-  const { user_id } = req.params; // Retrieve the user_id from the path parameter
+  const { user_id } = req.params; 
 
-  console.log("User ID:", user_id); // Debug: Log the user_id to check its format and value
+  console.log("User ID:", user_id); 
 
   try {
     const query = {
       $or: [
-        { created_by: user_id }, // Matches projects created by the user
-        { "collaborators.user_id": user_id }, // Matches projects where the user is a collaborator
+        { created_by: user_id }, 
+        { "collaborators.user_id": user_id }, 
       ],
     };
 
-    console.log("Query:", JSON.stringify(query)); // Debug: Log the constructed query
+    console.log("Query:", JSON.stringify(query)); 
 
     const projects = await Project.find(query);
 
-    console.log("Found projects:", projects.length); // Debug: Log number of projects found
+    console.log("Found projects:", projects.length); 
 
     if (projects.length > 0) {
       res.status(200).json(projects);
@@ -116,7 +116,7 @@ router.patch(
         { new: true }
       );
       res.status(200).json(project);
-      io.emit("fileUpdated", { projectId, fileName, code_content }); // Notify all clients of the update
+      io.emit("fileUpdated", { projectId, fileName, code_content }); 
     } catch (error) {
       res.status(400).json({ message: "Failed to update file", error: error });
     }
@@ -128,7 +128,6 @@ router.patch("/projects/:projectId/add-collaborator", async (req, res) => {
   const { email, permission } = req.body;
 
   try {
-    // Fetch user_id from PostgreSQL using the email
     const pgRes = await db.query("SELECT user_id FROM users WHERE email = $1", [
       email,
     ]);
@@ -138,7 +137,6 @@ router.patch("/projects/:projectId/add-collaborator", async (req, res) => {
     const user_id = pgRes.rows[0].user_id;
     console.log(user_id, projectId, permission);
 
-    // Update MongoDB with the new collaborator
     const updatedProject = await Project.findByIdAndUpdate(
       projectId,
       {

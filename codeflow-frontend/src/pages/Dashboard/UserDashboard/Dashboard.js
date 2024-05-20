@@ -22,6 +22,7 @@ export default function Dashbaord() {
     problemsSolved: 0,
     averageStars: 0,
   });
+  const [notifications, setNotifications] = useState([]);
 
   const authUser = useSelector((state) => state.user);
   const [projects, setProjects] = useState([]);
@@ -38,6 +39,17 @@ export default function Dashbaord() {
       console.log(error);
     }
   };
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/notifications`
+      );
+      setNotifications(response.data); 
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
   useEffect(() => {
     async function fetchStats() {
       try {
@@ -54,6 +66,7 @@ export default function Dashbaord() {
 
   useEffect(() => {
     fetchProjects();
+    fetchNotifications();
   }, []);
   return (
     <>
@@ -91,18 +104,17 @@ export default function Dashbaord() {
                 textAlign: "left",
               }}
             >
-              <div>
-                <h1 className="text-2xl mb-4">Whats New 💥</h1>
-                <p className="text-slate-500">Real time code editing</p>
-                <p className="text-slate-500">
-                  Premium account with unlimited repositories
-                </p>
-                <p className="text-slate-500">
-                  Online compilation and output of the code
-                </p>
-              </div>
+              <h1 className="text-2xl">Notifications</h1>
+              <ul>
+                {notifications.map((notification, index) => (
+                  <li key={index} className="p-2">
+                    {notification.message}
+                  </li>
+                ))}
+              </ul>
             </Item>
           </Grid>
+
           <Grid item md={6} sm={8}>
             <Item
               style={{
@@ -144,10 +156,30 @@ export default function Dashbaord() {
                     }}
                   >
                     <CardContent>
-                      <Typography variant="h5" component="div">
+                      <Typography
+                        variant="h5"
+                        component="div"
+                        sx={{
+                          fontSize: {
+                            xs: "1rem",
+                            sm: "1.5rem",
+                            md: "2.0rem",
+                          },
+                        }}
+                      >
                         Problems Solved
                       </Typography>
-                      <Typography variant="h2" component="p">
+                      <Typography
+                        variant="h2"
+                        component="p"
+                        sx={{
+                          fontSize: {
+                            xs: "1rem",
+                            sm: "1.5rem",
+                            md: "3.5rem",
+                          },
+                        }}
+                      >
                         {stats.problemsSolved}
                       </Typography>
                     </CardContent>
@@ -161,7 +193,17 @@ export default function Dashbaord() {
                     }}
                   >
                     <CardContent>
-                      <Typography variant="h5" component="div">
+                      <Typography
+                        variant="h5"
+                        component="div"
+                        sx={{
+                          fontSize: {
+                            xs: "1rem",
+                            sm: "1.5rem",
+                            md: "2.0rem",
+                          },
+                        }}
+                      >
                         Average Star Rating
                       </Typography>
                       <Typography
@@ -169,6 +211,13 @@ export default function Dashbaord() {
                         component="p"
                         justifyContent={"center"}
                         alignItems="center"
+                        sx={{
+                          fontSize: {
+                            xs: "1rem",
+                            sm: "1.5rem",
+                            md: "3.5rem",
+                          },
+                        }}
                       >
                         {stats.averageStars} <StarRateIcon fontSize="10" />
                       </Typography>

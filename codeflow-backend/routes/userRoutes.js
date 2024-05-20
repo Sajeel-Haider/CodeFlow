@@ -62,4 +62,14 @@ router.get("/user/stats/:userId", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+router.get("/notifications", async (req, res) => {
+  try {
+    const { rows } = await db.query("SELECT * FROM notification");
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error accessing the database" });
+  }
+});
+
 module.exports = router;

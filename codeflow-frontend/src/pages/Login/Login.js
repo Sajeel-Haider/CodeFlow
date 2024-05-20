@@ -25,23 +25,20 @@ const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           toast.success(res.data.message);
+
           dispatch(setAuthUser(res.data.user));
+
+          localStorage.setItem("isAuthenticated", true);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+
           setTimeout(() => {
-            console.log(res.data.user.is_admin);
             if (res.data.user.is_admin) {
               navigate("/adminDashboard/dashboard");
             } else {
               navigate("/userDashboard/dashboard");
             }
           }, 5000);
-        }
-        if (res.status === 400) {
-          toast.warn(res.data.message);
-        }
-        if (res.status === 500) {
-          toast.error(res.data.message);
-        }
-        if (res.status === 401) {
+        } else {
           toast.warn(res.data.message);
         }
       })
@@ -54,7 +51,7 @@ const Login = () => {
   return (
     <>
       <div className="bg-theme_black text-white flex justify-center items-center h-screen">
-        <div className="w-11/12 sm:w-96 bg-black text-white  px-12 py-12 rounded-2xl">
+        <div className="w-11/12 sm:w-96 bg-black text-white px-12 py-12 rounded-2xl">
           <form onSubmit={handleSubmit}>
             <legend className="mb-1 text-4xl font-medium">
               Welcome Back !
@@ -69,7 +66,7 @@ const Login = () => {
                 <input
                   type="email"
                   placeholder="Email"
-                  className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2 "
+                  className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2"
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
@@ -78,7 +75,7 @@ const Login = () => {
                 <input
                   type="password"
                   placeholder="Password"
-                  className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2 "
+                  className="bg-theme_black w-full p-2 border rounded-lg focus:outline-none focus:ring-2"
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
@@ -91,17 +88,9 @@ const Login = () => {
             >
               Login
             </button>
-            {/* <div className="mt-4 text-center">
-              <button
-                type="button"
-                className="w-full p-3 hover:bg-gray-500 bg-black text-white rounded-lg font-medium"
-              >
-                Login with Google
-              </button>
-            </div> */}
           </form>
           <div className="text-right mb-4">
-            <span className="inline-block text-sm text-white  p-2 rounded-2xl">
+            <span className="inline-block text-sm text-white p-2 rounded-2xl">
               Create your account?{" "}
               <a href="/signup" className="text-blue-500 hover:text-blue-700">
                 Sign Up

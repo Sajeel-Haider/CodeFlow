@@ -23,10 +23,10 @@ const Payment = () => {
         formData
       );
       console.log(response.data.message);
-      alert("Payment successful!"); // Replace with a more suitable response handling
+      alert("Payment successful!");
     } catch (error) {
       console.error("Payment error:", error.response.data.error);
-      alert("Payment failed!"); // Replace with a more suitable response handling
+      alert("Payment failed!");
     }
   };
 

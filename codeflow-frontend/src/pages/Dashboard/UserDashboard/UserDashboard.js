@@ -1,9 +1,10 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux"; // Import useDispatch from react-redux
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu"; // Import the burger menu icon
+import MenuIcon from "@mui/icons-material/Menu";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
@@ -11,21 +12,35 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
-import { MdSpaceDashboard } from "react-icons/md";
+import { MdSpaceDashboard, MdQuestionMark } from "react-icons/md";
 import { IoIosGitNetwork } from "react-icons/io";
 import { FaCode } from "react-icons/fa";
-import { IoMdSettings } from "react-icons/io";
-import { MdQuestionMark } from "react-icons/md";
+
+import { clearAuthUser } from "../../../store/slices/authUser-slice";
 
 export default function UserDashboard({ children }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(clearAuthUser());
+
+    localStorage.removeItem("user");
+    localStorage.removeItem("isAuthenticated");
+
+    navigate("/");
+  };
 
   const updateNavigateUrl = (route) => {
-    navigate(`/userDashboard/${route}`);
+    if (route === "logout") {
+      handleLogout();
+    } else {
+      navigate(`/userDashboard/${route}`);
+    }
   };
 
   const [state, setState] = React.useState({
-    bottom: false, // Only keep the 'bottom' state
+    bottom: false,
   });
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -41,76 +56,34 @@ export default function UserDashboard({ children }) {
 
   const list = (anchor) => (
     <Box
-      style={{
-        backgroundColor: "#003C43",
-        color: "white",
-      }}
+      style={{ backgroundColor: "#003C43", color: "white" }}
       sx={{ width: anchor === "bottom" ? "auto" : 250 }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List
-        style={{
-          color: "white",
-        }}
-      >
+      <List style={{ color: "white" }}>
         {[
           {
             name: "Dashboard",
-            icon: (
-              <MdSpaceDashboard
-                style={{
-                  color: "white",
-                }}
-              />
-            ),
+            icon: <MdSpaceDashboard style={{ color: "white" }} />,
             url: "dashboard",
           },
           {
             name: "Repositories",
-            icon: (
-              <IoIosGitNetwork
-                style={{
-                  color: "white",
-                }}
-              />
-            ),
+            icon: <IoIosGitNetwork style={{ color: "white" }} />,
             url: "repositories",
           },
           {
             name: "Challenges",
-            icon: (
-              <FaCode
-                style={{
-                  color: "white",
-                }}
-              />
-            ),
+            icon: <FaCode style={{ color: "white" }} />,
             url: "challenges",
           },
-          // {
-          //   name: "About us",
-          //   icon: (
-          //     <MdQuestionMark
-          //       style={{
-          //         color: "white",
-          //       }}
-          //     />
-          //   ),
-          //   url: "about",
-          // },
-          // {
-          //   name: "Settings",
-          //   icon: (
-          //     <IoMdSettings
-          //       style={{
-          //         color: "white",
-          //       }}
-          //     />
-          //   ),
-          //   url: "settings",
-          // },
+          {
+            name: "Logout",
+            icon: <MdQuestionMark style={{ color: "white" }} />,
+            url: "logout",
+          },
         ].map((item, index) => (
           <ListItem key={item.name} disablePadding>
             <ListItemButton onClick={() => updateNavigateUrl(item.url)}>
@@ -131,7 +104,7 @@ export default function UserDashboard({ children }) {
         aria-label="open drawer"
         edge="start"
         onClick={toggleDrawer("bottom", true)}
-        sx={{ color: "white", marginLeft: "auto", marginRight: 2 }} // Position the button on the right
+        sx={{ color: "white", marginLeft: "auto", marginRight: 2 }}
       >
         <MenuIcon />
       </IconButton>

@@ -26,19 +26,6 @@ const ProjectDetails = () => {
     console.log("socket error => ", e);
   };
 
-  // useEffect(() => {
-  //   const init = async () => {
-  //     socketRef.current = await initSocket();
-
-  //     socketRef.current.on("connect_error", (err) => handleSocketError(err));
-  //     socketRef.current.on("connect_failed", (err) => handleSocketError(err));
-
-  //     socketRef.current.emit("join", {
-  //       project,
-  //     });
-  //   };
-  //   init();
-  // }, []);
   useEffect(() => {
     const init = async () => {
       socketRef.current = await initSocket();
@@ -53,7 +40,6 @@ const ProjectDetails = () => {
           fileId === selectedFile?._id &&
           newContent !== selectedFile.code_content
         ) {
-          // Update editor content only if it's different from the current content
           console.log("Update received", newContent);
           setSelectedFile((prev) => ({
             ...prev,
@@ -68,11 +54,11 @@ const ProjectDetails = () => {
     return () => {
       socketRef.current?.disconnect();
     };
-  }, [selectedFile, project._id]); // Dependency on selectedFile and project._id
+  }, [selectedFile, project._id]);
 
   useEffect(() => {
     if (files.length > 0) {
-      setSelectedFile(files[0]); // Automatically select the first file on load
+      setSelectedFile(files[0]);
     }
   }, [files]);
 
@@ -93,17 +79,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // const handleChange = (newValue) => {
-  //   setSelectedFile((prevSelectedFile) => ({
-  //     ...prevSelectedFile,
-  //     code_content: newValue,
-  //   }));
-  //   socketRef.current.emit("update-file", {
-  //     fileId: selectedFile._id, // Assuming each file has a unique identifier
-  //     fileName: selectedFile.file_name,
-  //     newContent: newValue,
-  //   });
-  // };
   const addCollaborator = async (projectId, email, permission) => {
     console.log(projectId);
     try {
@@ -125,7 +100,6 @@ const ProjectDetails = () => {
     console.log(`Add collaborator: ${email}`);
     console.log(`Add collaborator: ${permission}`);
     addCollaborator(project._id, email, permission);
-    // Here you would handle the logic to add a collaborator, e.g., send a request to your server
     setIsModalOpen(false);
   };
 
@@ -138,7 +112,7 @@ const ProjectDetails = () => {
       html: "html",
       css: "css",
     };
-    return languageMap[extension] || "plaintext"; // Use 'plaintext' as default for unknown extensions
+    return languageMap[extension] || "plaintext";
   };
 
   const onMount = (editor) => {

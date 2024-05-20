@@ -1,6 +1,6 @@
 const express = require("express");
-const db = require("../database/connectPostgresDb"); // Your PostgreSQL database connection
-const CodingQuestion = require("../model/Code"); // MongoDB model for coding questions
+const db = require("../database/connectPostgresDb");
+const CodingQuestion = require("../model/Code");
 const router = express.Router();
 const { PythonShell } = require("python-shell");
 const fs = require("fs");
@@ -11,10 +11,8 @@ router.post("/allcodes", async (req, res) => {
   const userEmail = req.body.email;
 
   try {
-    // Retrieve all coding questions from MongoDB
     const codingQuestions = await CodingQuestion.find();
 
-    // Query to find the user by email in PostgreSQL
     const userQuery = "SELECT * FROM users WHERE email = $1";
     const userResult = await db.query(userQuery, [userEmail]);
 
@@ -24,13 +22,10 @@ router.post("/allcodes", async (req, res) => {
 
     const user = userResult.rows[0];
 
-    // Retrieve solved questions for the user from PostgreSQL
     const solvedQuery = "SELECT * FROM solved_questions WHERE user_id = $1";
     const solvedResults = await db.query(solvedQuery, [user.user_id]);
 
-    // Map the coding questions to include stars if the question has been solved
     const questionsWithStars = codingQuestions.map((question) => {
-      // Find the solved question in the result set from PostgreSQL
       const solvedQuestion = solvedResults.rows.find(
         (sq) => sq.question_id === question.id.toString()
       );
@@ -51,12 +46,19 @@ router.post("/allcodes", async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 });
-
+router.post("/questions", async (req, res) => {
+  try {
+    const newQuestion = new Question(req.body);
+    await newQuestion.save();
+    res.status(201).send(newQuestion);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 router.post("/saveuser", async (req, res) => {
   try {
     const { email, username } = req.body;
 
-    // Check if the user already exists in PostgreSQL
     const existingUserQuery = "SELECT * FROM users WHERE email = $1";
     const existingUserResult = await db.query(existingUserQuery, [email]);
 
@@ -64,7 +66,6 @@ router.post("/saveuser", async (req, res) => {
       return res.status(200).send("User already saved");
     }
 
-    // Insert new user into PostgreSQL
     const insertUserQuery =
       "INSERT INTO users (username, email) VALUES ($1, $2)";
     await db.query(insertUserQuery, [username, email]);
@@ -97,7 +98,7 @@ const getParticularCode = async (codeID) => {
 
 router.post("/execute", async (req, res) => {
   const { code, codeId, email } = req.body;
-  const codeDetails = await getParticularCode(codeId); // Function needs to be defined based on your setup
+  const codeDetails = await getParticularCode(codeId);
 
   try {
     fs.writeFileSync("test.py", pre + code + codeDetails.post);
@@ -109,7 +110,7 @@ router.post("/execute", async (req, res) => {
 
       const options = {
         mode: "text",
-        pythonOptions: ["-u"], // Unbuffered outputs
+        pythonOptions: ["-u"],
         args: [...inputArray, output],
       };
 
@@ -121,7 +122,6 @@ router.post("/execute", async (req, res) => {
     const trueCount = results.filter((result) => result).length;
     const starsEarned = Math.round((trueCount / results.length) * 5);
 
-    // Fetch user data from PostgreSQL
     const userQuery = "SELECT * FROM users WHERE email = $1";
     const userResult = await db.query(userQuery, [email]);
 
@@ -131,7 +131,6 @@ router.post("/execute", async (req, res) => {
 
     const userId = userResult.rows[0].user_id;
 
-    // Update or insert solved questions
     const solvedQuery =
       "SELECT * FROM solved_questions WHERE user_id = $1 AND question_id = $2";
     const solvedResult = await db.query(solvedQuery, [userId, codeId]);
@@ -146,7 +145,6 @@ router.post("/execute", async (req, res) => {
       await db.query(insertSolved, [userId, codeId, starsEarned]);
     }
 
-    // Update contributions
     const today = new Date().toISOString().split("T")[0];
     const contributionQuery =
       "SELECT * FROM contributions WHERE user_id = $1 AND contribution_date = $2";
@@ -176,7 +174,6 @@ router.post("/managecreds", async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Query to find the user and their credits
     const userQuery = "SELECT user_id, credits FROM users WHERE email = $1";
     const userResult = await db.query(userQuery, [email]);
 
@@ -186,9 +183,7 @@ router.post("/managecreds", async (req, res) => {
 
     const user = userResult.rows[0];
 
-    // Check if user has sufficient credits
     if (user.credits > 0) {
-      // Update user credits in the database
       const newCredits = user.credits - 5;
       const updateCreditsQuery =
         "UPDATE users SET credits = $1 WHERE user_id = $2";

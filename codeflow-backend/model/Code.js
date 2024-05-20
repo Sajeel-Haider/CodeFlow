@@ -32,7 +32,7 @@ const codeSchema = new mongoose.Schema({
   testcases: {
     type: [
       {
-        inputs: Array, // Modify this based on your actual testcase data structure
+        inputs: Array,
         expectedOutput: String,
       },
     ],

@@ -16,16 +16,13 @@ router.post("/payment", async (req, res) => {
     },
   });
 
-  // Confirm the payment
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount, // in cents
+    amount: amount,
     currency: "usd",
     payment_method: paymentMethod.id,
     confirm: true,
   });
 
-  // if (paymentIntent.status) {
-  // Update user's premium status in the database
   const currentDate = new Date();
   const premiumStartDate = currentDate.toISOString();
   const premiumEndDate = new Date(
@@ -38,9 +35,6 @@ router.post("/payment", async (req, res) => {
   );
 
   res.status(200).send({ message: "Payment successful and premium activated" });
-  // } else {
-  //   res.status(400).send({ error: "Payment failed" });
-  // }
 });
 
 module.exports = router;

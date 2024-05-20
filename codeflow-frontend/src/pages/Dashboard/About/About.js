@@ -36,7 +36,7 @@ const About = () => {
           learn, and grow.
         </p>
       </div>
-      <div className="lines-background"></div> {/* Background lines */}
+      <div className="lines-background"></div>
     </div>
   );
 };

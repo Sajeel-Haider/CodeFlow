@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import Button from "../Buttons/Button";
 
 const CollaboratorModal = ({ isOpen, onClose, onSubmit }) => {
@@ -8,8 +9,8 @@ const CollaboratorModal = ({ isOpen, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ email, permission });
-    setEmail(""); // Clear the input field after submission
-    setPermission("view"); // Reset permission to default
+    setEmail(""); 
+    setPermission("view"); 
   };
 
   if (!isOpen) return null;

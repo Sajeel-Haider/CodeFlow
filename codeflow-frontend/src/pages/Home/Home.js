@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./Home.css";
+
 import { useNavigate } from "react-router";
 import { Editor } from "@monaco-editor/react";
 
@@ -8,11 +8,14 @@ import { okaidia } from "@uiw/codemirror-theme-okaidia";
 import CodeMirror from "@uiw/react-codemirror";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+
+import "./Home.css";
+
 const extensions = [javascript({ jsx: true })];
 const Home = () => {
   const [navOpen, setNavOpen] = useState(false);
   const navigate = useNavigate();
-  const mapRef = useRef(null); // Add a ref to keep track of the map instance
+  const mapRef = useRef(null);
 
   const handleCloseNav = (e) => {
     if (navOpen) {
@@ -21,20 +24,16 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // Check if map is already initialized
     if (!mapRef.current) {
-      // Create the map
       mapRef.current = L.map("map", {
-        center: [20, 0], // Focus on the equatorial region
+        center: [20, 0],
         zoom: 2,
         minZoom: 1,
         maxZoom: 5,
         worldCopyJump: true,
-        zoomControl: false, // Disable zoom control for a cleaner look
+        zoomControl: false,
       });
 
-      // Add a tile layer to the map, here's using OpenStreetMap tiles
-      // Using a dark themed tile layer from CartoDB
       L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
         {
@@ -46,10 +45,9 @@ const Home = () => {
       ).addTo(mapRef.current);
     }
 
-    // Cleanup function to avoid memory leaks and reinitialization issues
     return () => {
       if (mapRef.current) {
-        mapRef.current.remove(); // This will destroy the map instance
+        mapRef.current.remove();
         mapRef.current = null;
       }
     };
@@ -125,7 +123,6 @@ const Home = () => {
       )}
 
       <div className="relative bg-theme_black text-white min-h-screen overflow-hidden ">
-        {/* Background Circles */}
         <div className="background-circle circle-large"></div>
         <div className="background-circle circle-medium"></div>
         <div className="background-circle circle-small"></div>
@@ -136,8 +133,6 @@ const Home = () => {
           </h1>
           <div className=" mt-4">
             <div className="w-1/2">
-              {/* Assuming Editor is a component you've imported */}
-
               <CodeMirror
                 value={"//start writing your code"}
                 height="60vh"

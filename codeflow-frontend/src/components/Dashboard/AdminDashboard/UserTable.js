@@ -88,7 +88,7 @@ const UserTable = ({ userData }) => {
               </td>
               <td
                 className="px-4 py-2 border hidden md:table-cell cursor-pointer"
-                onClick={() => handleDeleteUser(data.user_id)} // Corrected onClick handler
+                onClick={() => handleDeleteUser(data.user_id)}
               >
                 <MdDelete />
               </td>

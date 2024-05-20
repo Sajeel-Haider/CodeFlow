@@ -5,6 +5,7 @@ import SearchBar from "../../../utils/Tools/SearchBar";
 import Button from "../../../utils/Buttons/Button";
 import RepositoryCard from "../../../utils/Cards/RespositoryCard";
 import { useSelector } from "react-redux";
+
 const Repositories = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [projects, setProjects] = useState([]);
@@ -19,7 +20,7 @@ const Repositories = () => {
         `${process.env.REACT_APP_API_URL}/api/projects/${authUser.user_id}`
       );
       setProjects(response.data);
-      setFilteredProjects(response.data); // Initially, all projects are shown
+      setFilteredProjects(response.data); 
     } catch (error) {
       console.log(error);
     }
@@ -37,7 +38,7 @@ const Repositories = () => {
       );
       setFilteredProjects(filtered);
     } else {
-      setFilteredProjects(projects); // If search is empty, display all projects
+      setFilteredProjects(projects); 
     }
   };
 

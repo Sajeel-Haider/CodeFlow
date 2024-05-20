@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+
 import {
   Tabs,
   TabList,
@@ -9,15 +9,15 @@ import {
   TabPanel,
   Button,
   Box,
-  Avatar,
   Text,
   Icon,
 } from "@chakra-ui/react";
 import Stars from "../../../components/Dashboard/UserDashboard/Stars";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+
 import { FaSignOutAlt } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 const AllCodes = () => {
   const [codeArray, setCodeArray] = useState([]);
   const authUser = useSelector((state) => state.user);
