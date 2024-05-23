@@ -1,23 +1,22 @@
+// src/components/PrivateRoute.js
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-/**
- * PrivateRoute - A wrapper component that checks for user authentication and role before rendering the specified component.
- *
- * @param {ReactNode} children - The children components to be rendered if the conditions are met.
- * @param {string} roleRequired - The role required to access the route.
- */
-const PrivateRoute = ({ children, roleRequired }) => {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+const PrivateRoute = ({ component: Component, roleRequired }) => {
+  const { isAuthenticated, role } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  } else if (roleRequired && user.is_admin !== roleRequired) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children ? children : null;
+  return (
+    <Route
+      render={({ location }) =>
+        isAuthenticated && (!roleRequired || role === roleRequired) ? (
+          <Component />
+        ) : (
+          <Navigate to="/login" state={{ from: location }} />
+        )
+      }
+    />
+  );
 };
 
 export default PrivateRoute;

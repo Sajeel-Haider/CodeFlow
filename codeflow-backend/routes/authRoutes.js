@@ -40,11 +40,9 @@ router.post("/signup", async (req, res) => {
       [name, email, hashedPassword, formattedDate]
     );
 
-    const token = generateToken(user.rows[0]);
-    res.status(201).send({
+    res.status(200).send({
       message: "User registered successfully",
       user: user.rows[0],
-      token,
     });
   } catch (error) {
     console.error("Error saving user:", error);

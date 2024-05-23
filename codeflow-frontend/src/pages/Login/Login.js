@@ -28,13 +28,17 @@ const Login = () => {
 
           dispatch(setAuthUser(res.data.user));
 
-          localStorage.setItem("isAuthenticated", true);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
+          localStorage.setItem(
+            "user",
+            JSON.stringify(res.data.user, res.data.token)
+          );
 
           setTimeout(() => {
             if (res.data.user.is_admin) {
+              localStorage.setItem("isAuthenticatedUser", true);
               navigate("/adminDashboard/dashboard");
             } else {
+              localStorage.setItem("isAuthenticatedUser", true);
               navigate("/userDashboard/dashboard");
             }
           }, 5000);

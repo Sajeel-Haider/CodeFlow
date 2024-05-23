@@ -1,6 +1,6 @@
 import { Provider } from "react-redux";
 
-import AppNavigation from "../src/navigation/index";
+import AppNavigation from "./navigation/AppRoutes";
 import store from "./store/index";
 
 function App() {

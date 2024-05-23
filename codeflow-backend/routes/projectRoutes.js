@@ -37,7 +37,7 @@ router.post("/createProject", upload.array("files"), async (req, res) => {
     await newProject.save();
     res.status(201).send({
       message: "Project created successfully",
-      project_id: newProject._id, 
+      project_id: newProject._id,
     });
   } catch (error) {
     console.error("Error creating project:", error);
@@ -46,7 +46,17 @@ router.post("/createProject", upload.array("files"), async (req, res) => {
       .send({ message: "Error creating project", error: error.message });
   }
 });
-
+router.get("/count/projects", async (req, res) => {
+  try {
+    const projectCount = await Project.countDocuments();
+    res.status(200).json({ count: projectCount });
+  } catch (error) {
+    console.error("Error retrieving project count:", error);
+    res
+      .status(500)
+      .json({ message: "Error retrieving project count", error: error });
+  }
+});
 router.get("/projects", async (req, res) => {
   try {
     const project = await Project.find();
@@ -57,23 +67,20 @@ router.get("/projects", async (req, res) => {
 });
 
 router.get("/projects/:user_id", async (req, res) => {
-  const { user_id } = req.params; 
+  const { user_id } = req.params;
 
-  console.log("User ID:", user_id); 
+  console.log("User ID:", user_id);
 
   try {
     const query = {
-      $or: [
-        { created_by: user_id }, 
-        { "collaborators.user_id": user_id }, 
-      ],
+      $or: [{ created_by: user_id }, { "collaborators.user_id": user_id }],
     };
 
-    console.log("Query:", JSON.stringify(query)); 
+    console.log("Query:", JSON.stringify(query));
 
     const projects = await Project.find(query);
 
-    console.log("Found projects:", projects.length); 
+    console.log("Found projects:", projects.length);
 
     if (projects.length > 0) {
       res.status(200).json(projects);
@@ -116,7 +123,7 @@ router.patch(
         { new: true }
       );
       res.status(200).json(project);
-      io.emit("fileUpdated", { projectId, fileName, code_content }); 
+      io.emit("fileUpdated", { projectId, fileName, code_content });
     } catch (error) {
       res.status(400).json({ message: "Failed to update file", error: error });
     }

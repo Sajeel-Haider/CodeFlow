@@ -4,8 +4,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from "../pages/Dashboard/AdminDashboard/AdminDashboard";
 import UserDashboard from "../pages/Dashboard/UserDashboard/UserDashboard";
 
-import SignUp from "../../src/pages/SignUp/SignUp";
-import Login from "../../src/pages/Login/Login";
+import SignUp from "../pages/SignUp/SignUp";
+import Login from "../pages/Login/Login";
 import PrivateRoute from "./PrivateRoute";
 import Users from "../pages/Dashboard/AdminDashboard/Users";
 import AddProblem from "../pages/Dashboard/AdminDashboard/AddProblem";
@@ -15,12 +15,16 @@ import ProjectDetails from "../pages/Dashboard/UserDashboard/ProjectDetails";
 import Challenges from "../pages/Dashboard/UserDashboard/Challenges";
 import ChallengeDetails from "../pages/Dashboard/UserDashboard/ChallengeDetails";
 import Home from "../pages/Home/Home";
-import About from "../pages/Dashboard/About/About";
+import About from "../pages/About/About";
 import Dashboard from "../pages/Dashboard/UserDashboard/Dashboard";
+import AdmDashboard from "../pages/Dashboard/AdminDashboard/AdmDashboard";
 import Payment from "../pages/Dashboard/UserDashboard/Payment";
+import { useAuth } from "../context/AuthContext";
+import Dashbaord from "../pages/Dashboard/UserDashboard/Dashboard";
 
-const index = () => {
-  const user = localStorage.getItem("user");
+const AppRoutes = () => {
+  // const { isAuthenticated, role } = useAuth();
+  // const user = localStorage.getItem("user");
 
   return (
     <Routes>
@@ -30,21 +34,12 @@ const index = () => {
       <Route path="/about" element={<About />} />
 
       <Route
-        path="/adminDashboard"
-        element={
-          <PrivateRoute component={AdminDashboard} roleRequired="admin" />
-        }
-      />
-      <Route
-        path="/userDashboard"
-        element={<PrivateRoute component={UserDashboard} roleRequired="user" />}
-      />
-      <Route
         path="/adminDashboard/*"
         element={
           <AdminDashboard>
             <Routes>
               <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdmDashboard />} />
               <Route path="users" element={<Users />} />
               <Route path="addProblem" element={<AddProblem />} />
             </Routes>
@@ -56,7 +51,7 @@ const index = () => {
         element={
           <UserDashboard>
             <Routes>
-              <Route index element={<Dashboard />} />
+              <Route index element={<AdmDashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />
               <Route path="repositories" element={<Repositories />} />
@@ -75,4 +70,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default AppRoutes;

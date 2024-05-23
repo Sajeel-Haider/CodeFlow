@@ -44,7 +44,7 @@ export default function Dashbaord() {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/notifications`
       );
-      setNotifications(response.data); 
+      setNotifications(response.data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
@@ -219,7 +219,12 @@ export default function Dashbaord() {
                           },
                         }}
                       >
-                        {stats.averageStars} <StarRateIcon fontSize="10" />
+                        {isNaN(stats.averageStars) ? (
+                          <>0</>
+                        ) : (
+                          <>{stats.averageStars}</>
+                        )}
+                        <StarRateIcon fontSize="10" />
                       </Typography>
                     </CardContent>
                   </Card>

@@ -71,5 +71,51 @@ router.get("/notifications", async (req, res) => {
     res.status(500).json({ message: "Error accessing the database" });
   }
 });
+router.get("/user/premium-stats", async (req, res) => {
+  try {
+    const query = `
+      SELECT is_premium, COUNT(*) AS count
+      FROM users
+      GROUP BY is_premium;
+    `;
+    const { rows } = await db.query(query);
+    let premiumUsers = 0;
+    let nonPremiumUsers = 0;
+    rows.forEach((row) => {
+      if (row.is_premium) {
+        premiumUsers = row.count;
+      } else {
+        nonPremiumUsers = row.count;
+      }
+    });
+    res.status(200).json({
+      premiumUsers,
+      nonPremiumUsers,
+    });
+  } catch (error) {
+    console.error("Error fetching premium stats:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+router.get("/activity/daily", async (req, res) => {
+  try {
+    const today = format(new Date(), "yyyy-MM-dd");
+    const query = `
+      SELECT activity_type, COUNT(*) AS count
+      FROM activity_log
+      WHERE created_at::date = $1
+      GROUP BY activity_type;
+    `;
+    const { rows } = await db.query(query, [today]);
+    if (rows.length > 0) {
+      res.status(200).json(rows);
+    } else {
+      res.status(204).send({ message: "No activities found for today." });
+    }
+  } catch (error) {
+    console.error("Error fetching daily activity:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 module.exports = router;

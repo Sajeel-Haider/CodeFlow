@@ -1,6 +1,6 @@
 import sys;
 
-def add(a, b): return 
+def add(a, b): retur
 if __name__=="__main__":
  a = int(sys.argv[1])
  b = int(sys.argv[2])

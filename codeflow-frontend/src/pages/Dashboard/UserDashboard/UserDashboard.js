@@ -26,7 +26,7 @@ export default function UserDashboard({ children }) {
     dispatch(clearAuthUser());
 
     localStorage.removeItem("user");
-    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("isAuthenticatedUser");
 
     navigate("/");
   };

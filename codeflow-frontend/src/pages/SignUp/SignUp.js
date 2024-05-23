@@ -6,8 +6,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { setAuthUser } from "../../store/slices/authUser-slice";
-
 import signup_back from "../../assets/SignUp/signup-back.jpg";
 
 const SignUp = () => {
@@ -16,9 +14,13 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password.length < 5) {
+      toast.warn("Password length should be greater than 5 characters");
+      return;
+    }
     axios
       .post(`${process.env.REACT_APP_API_URL}/signup`, {
         name,
@@ -31,7 +33,6 @@ const SignUp = () => {
         }
         if (res.status === 200) {
           toast.success(res.data.message);
-          dispatch(setAuthUser(res.data.user));
           setTimeout(() => {
             navigate("/login");
           }, 5000);
@@ -49,7 +50,6 @@ const SignUp = () => {
       .catch((err) => {
         toast.error("Server not responding");
       });
-    e.preventDefault();
   };
 
   return (
@@ -128,14 +128,6 @@ const SignUp = () => {
               >
                 Create an Account
               </button>
-              <div className="mt-4 text-center">
-                <button
-                  type="button"
-                  className="w-full p-3 hover:bg-gray-500 bg-black text-white rounded-lg font-medium"
-                >
-                  Sign up with Google
-                </button>
-              </div>
             </form>
           </div>
         </div>

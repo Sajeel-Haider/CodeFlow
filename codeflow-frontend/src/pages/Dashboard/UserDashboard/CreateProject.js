@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import Button from "../../../utils/Buttons/Button";
+import { toast } from "react-toastify";
 
 const CreateProject = () => {
   const [projectName, setProjectName] = useState("");
@@ -41,8 +42,8 @@ const CreateProject = () => {
     const formData = new FormData();
     formData.append("project_name", projectName);
     formData.append("description", description);
-    formData.append("created_by", authUser.user_id); 
-    formData.append("is_public", isPublic);
+    formData.append("created_by", authUser.user_id);
+    formData.append("is_public", false);
     formData.append("language", language);
     files.forEach((file) => {
       formData.append("files", file);
@@ -59,6 +60,7 @@ const CreateProject = () => {
         }
       );
       console.log("Project created:", response.data);
+      toast.success("Project Created");
     } catch (error) {
       console.error("Error creating project:", error);
     }
@@ -94,7 +96,7 @@ const CreateProject = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <label className="mr-4">
                 Public
                 <input
@@ -113,7 +115,7 @@ const CreateProject = () => {
                   onChange={() => setIsPublic(false)}
                 />
               </label>
-            </div>
+            </div> */}
             <div
               {...getRootProps({
                 className:

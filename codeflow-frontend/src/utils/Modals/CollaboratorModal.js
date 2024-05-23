@@ -9,8 +9,8 @@ const CollaboratorModal = ({ isOpen, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ email, permission });
-    setEmail(""); 
-    setPermission("view"); 
+    setEmail("");
+    setPermission("edit");
   };
 
   if (!isOpen) return null;
@@ -30,7 +30,7 @@ const CollaboratorModal = ({ isOpen, onClose, onSubmit }) => {
             required
           />
           <div className="mb-4">
-            <label className="mr-4">
+            {/* <label className="mr-4">
               <input
                 className="bg-black"
                 type="radio"
@@ -39,7 +39,7 @@ const CollaboratorModal = ({ isOpen, onClose, onSubmit }) => {
                 onChange={(e) => setPermission(e.target.value)}
               />
               View
-            </label>
+            </label> */}
             <label>
               <input
                 type="radio"

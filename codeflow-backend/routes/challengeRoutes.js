@@ -47,8 +47,9 @@ router.post("/allcodes", async (req, res) => {
   }
 });
 router.post("/questions", async (req, res) => {
+  console.log(req.body);
   try {
-    const newQuestion = new Question(req.body);
+    const newQuestion = new CodingQuestion(req.body);
     await newQuestion.save();
     res.status(201).send(newQuestion);
   } catch (error) {
@@ -200,5 +201,15 @@ router.post("/managecreds", async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 });
-
+router.get("/count/challenges", async (req, res) => {
+  try {
+    const challengeCount = await CodingQuestion.countDocuments();
+    res.status(200).json({ count: challengeCount });
+  } catch (error) {
+    console.error("Error retrieving challenge count:", error);
+    res
+      .status(500)
+      .json({ message: "Error retrieving challenge count", error: error });
+  }
+});
 module.exports = router;
